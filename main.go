@@ -12,7 +12,9 @@ import (
 
 func main() {
 	client := &http.Client{}
-	success := SignIn(client)
+	SignIn(client)
+	
+	// success := SignIn(client)
 	// if success {
 	// 	result := "签到成功"
 	// 	fmt.Println(result)
