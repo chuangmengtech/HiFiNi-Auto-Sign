@@ -45,7 +45,7 @@ func SignIn(client *http.Client) bool {
 	//提交请求
 	params := "sign=" + signKey
 	
-	reqest, err := http.NewRequest("POST", url, strings.NewReader(params.Encode()))
+	reqest, err := http.NewRequest("POST", url, strings.NewReader(params))
 	reqest.Header.Add("Cookie", cookie)
 	reqest.Header.Add("x-requested-with", "XMLHttpRequest")
 	//处理返回结果
