@@ -33,17 +33,17 @@ func SignIn(client *http.Client) bool {
 	//生成要访问的url
 	url := "https://www.hifini.com/sg_sign.htm"
 	cookie := os.Getenv("COOKIE")
-	signKey := os.Getenv("SIGN_KEY")
+	SIGN_KEY := os.Getenv("SIGN_KEY")
 	if cookie == "" {
 		fmt.Println("COOKIE不存在，请检查是否添加")
 		return false
 	}
-	if signKey == "" {
+	if SIGN_KEY == "" {
 		fmt.Println("SIGN_KEY不存在，请检查是否添加")
 		return false
 	}
 	//提交请求
-	params := "sign=" + signKey
+	params := "sign=" + SIGN_KEY
 	
 	reqest, err := http.NewRequest("POST", url, strings.NewReader(params))
 	reqest.Header.Add("Cookie", cookie)
