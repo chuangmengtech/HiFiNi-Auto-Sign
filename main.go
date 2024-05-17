@@ -49,6 +49,7 @@ func SignIn(client *http.Client) bool {
 	
 	reqest, err := http.NewRequest("POST", url, strings.NewReader(params))
 	reqest.Header.Add("Cookie", cookie)
+	reqest.Header.Add("Content-Type", "text/html; charset=utf-8")
 	reqest.Header.Add("x-requested-with", "XMLHttpRequest")
 	//处理返回结果
 	response, err := client.Do(reqest)
