@@ -6,25 +6,23 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
-	"net/url"
 	"strings"
 	"os"
-	"strings"
 )
 
 func main() {
 	client := &http.Client{}
 	success := SignIn(client)
-	if success {
-		result := "签到成功"
-		fmt.Println(result)
-		dingding(result)
-	} else {
-		result := "签到失败"
-		fmt.Println(result)
-		dingding(result)
-		os.Exit(3)
-	}
+	// if success {
+	// 	result := "签到成功"
+	// 	fmt.Println(result)
+	// 	dingding(result)
+	// } else {
+	// 	result := "签到失败"
+	// 	fmt.Println(result)
+	// 	dingding(result)
+	// 	os.Exit(3)
+	// }
 }
 
 
@@ -33,16 +31,19 @@ func SignIn(client *http.Client) bool {
 	//生成要访问的url
 	url := "https://www.hifini.com/sg_sign.htm"
 	cookie := os.Getenv("COOKIE")
-	SIGN_KEY := os.Getenv("SIGN_KEY")
+	signKey := os.Getenv("SIGN_KEY")
 	if cookie == "" {
 		fmt.Println("COOKIE不存在，请检查是否添加")
 		return false
 	}
+	if signKey == "" {
+		fmt.Println("SIGN_KEY不存在，请检查是否添加")
+		return false
+	}
 	//提交请求
-	data := url.Values{}
-	data.Set("sign", SIGN_KEY)
+	params := "sign=" + signKey
 	
-	reqest, err := http.NewRequest("POST", url, strings.NewReader(data.Encode()))
+	reqest, err := http.NewRequest("POST", url, strings.NewReader(params.Encode()))
 	reqest.Header.Add("Cookie", cookie)
 	reqest.Header.Add("x-requested-with", "XMLHttpRequest")
 	//处理返回结果
@@ -53,6 +54,9 @@ func SignIn(client *http.Client) bool {
 	defer response.Body.Close()
 	buf, _ := ioutil.ReadAll(response.Body)
 	fmt.Println(string(buf))
+	
+	// 钉钉推送
+	dingding(string(buf))
 	return strings.Contains(string(buf), "成功")
 }
 
@@ -68,7 +72,7 @@ func dingding(result string){
 		Text: struct {
 			Content string `json:"content"`
 		}{
-			Content: "HiFiNi" + result,
+			Content: "HiFiNi：" + result,
 		},
 	}
 
