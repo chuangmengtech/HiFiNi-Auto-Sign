@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
+      u "net/url"
 	"strings"
 	"os"
 )
@@ -45,9 +46,10 @@ func SignIn(client *http.Client) bool {
 	}
 
 	//提交请求
-	params := "sign=" + SIGN_KEY
+	params := u.Values{}
+    	params.Set("sign", SIGN_KEY)
 	
-	reqest, err := http.NewRequest("POST", url, strings.NewReader(params))
+	reqest, err := http.NewRequest("POST", url, strings.NewReader(params.Encode()))
 	reqest.Header.Add("Cookie", cookie)
 	reqest.Header.Add("Content-Type", "text/html; charset=utf-8")
 	reqest.Header.Add("x-requested-with", "XMLHttpRequest")
