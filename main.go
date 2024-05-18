@@ -84,7 +84,7 @@ func dingding(result string){
 		Text: struct {
 			Content string `json:"content"`
 		}{
-			Content: "HiFiNi：" + result,
+			Content: "HiFiNi：\n" + result,
 		},
 	}
 
