@@ -46,13 +46,11 @@ func SignIn(client *http.Client) bool {
 	}
 
 	//提交请求
-	params := u.Values{}
-    	params.Set("sign", SIGN_KEY)
+	formData := u.Values{}
+	formData.Set("sign", SIGN_KEY)
 	
-	reqest, err := http.NewRequest("POST",url, params)
+	reqest, err := http.PostForm(url, formData)
 	reqest.Header.Add("Cookie", cookie)
-	reqest.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36")
-	reqest.Header.Add("Content-Type", "multipart/form-data; boundary=<calculated when request is sent>")
 	reqest.Header.Add("x-requested-with", "XMLHttpRequest")
 	//处理返回结果
 	response, err := client.Do(reqest)
