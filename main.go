@@ -31,39 +31,45 @@ func main() {
 
 // SignIn 签到
 func SignIn(client *http.Client) bool {
-	//生成要访问的url
-	url := "https://www.hifini.com/sg_sign.htm"
-	cookie := os.Getenv("COOKIE")
-	SIGN_KEY := os.Getenv("SIGN_KEY")
-	fmt.Println(SIGN_KEY)
-	if cookie == "" {
-		fmt.Println("COOKIE不存在，请检查是否添加")
-		return false
-	}
-	if SIGN_KEY == "" {
-		fmt.Println("SIGN_KEY不存在，请检查是否添加")
-		return false
-	}
+    //生成要访问的url
+    urlStr := "https://www.hifini.com/sg_sign.htm"
+    cookie := os.Getenv("COOKIE")
+    SIGN_KEY := os.Getenv("SIGN_KEY")
+    fmt.Println(SIGN_KEY)
+    if cookie == "" {
+        fmt.Println("COOKIE不存在，请检查是否添加")
+        return false
+    }
+    if SIGN_KEY == "" {
+        fmt.Println("SIGN_KEY不存在，请检查是否添加")
+        return false
+    }
 
-	//提交请求
-	formData := u.Values{}
-	formData.Set("sign", SIGN_KEY)
-	
-	reqest, err := http.PostForm(url, formData)
-	reqest.Header.Add("Cookie", cookie)
-	reqest.Header.Add("x-requested-with", "XMLHttpRequest")
-	//处理返回结果
-	response, err := client.Do(reqest)
-	if err != nil {
-		panic(err)
-	}
-	defer response.Body.Close()
-	buf, _ := ioutil.ReadAll(response.Body)
-	fmt.Println(string(buf))
-	
-	// 钉钉推送
-	dingding(string(buf))
-	return strings.Contains(string(buf), "成功")
+    //提交请求
+    formData := url.Values{}
+    formData.Set("sign", SIGN_KEY)
+
+    req, err := http.NewRequest("POST", urlStr, strings.NewReader(formData.Encode()))
+    if err != nil {
+        panic(err)
+    }
+
+    req.Header.Add("Cookie", cookie)
+    req.Header.Add("x-requested-with", "XMLHttpRequest")
+    req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+    //处理返回结果
+    response, err := client.Do(req)
+    if err != nil {
+        panic(err)
+    }
+    defer response.Body.Close()
+    buf, _ := ioutil.ReadAll(response.Body)
+    fmt.Println(string(buf))
+
+    // 钉钉推送
+    dingding(string(buf))
+    return strings.Contains(string(buf), "成功")
 }
 
 func dingding(result string){
